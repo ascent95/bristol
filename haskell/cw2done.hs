@@ -1,0 +1,124 @@
+rep::Int->String->String
+rep 0 s = ""
+rep n s
+    | m == 0 = let y = s ++ s in rep d y
+    | otherwise = let y = rep (n-1) s in s ++ y
+    where (d,m) = divMod n 2
+
+allIn::Eq a => [a]->[a]->Bool
+allIn [] _ = True
+allIn (x:xs) ys
+    | elem x ys == False = False
+    | otherwise          = allIn xs ys 
+
+csh::Int->String->String
+csh n s = 
+    let l = length s
+        a = l - (n `mod` l)
+	(q,r) = splitAt a s 
+    in r ++ q
+
+--A quicksort function
+qsort :: Ord a => [a] -> [a]
+qsort [] = []
+qsort (x:xs) = (qsort ls) ++ [x] ++ (qsort gs)
+    where
+        ls = [y | y<-xs, y<=x]
+        gs = [y | y<-xs, y>x]
+
+dup :: [String] -> [String]
+dup s = aux s [[]]
+    where
+        aux :: [String] -> [String] -> [String]
+        aux [] l = l --Why can I pattern match [] to [String]?
+        aux (x:xs) l
+            | x `elem` xs = aux xs (x:l)
+            | otherwise   = aux xs l
+
+prm::String->String->Bool
+prm s t
+    | s == t             = False
+    | qsort s == qsort t = True
+    | otherwise          = False
+
+--Don't think this function will be useful.
+comp :: String -> String -> String -> String -> String
+comp [] _ acc long
+    | length acc > length long = acc
+    | otherwise = long 
+comp _ [] acc long
+    | length acc > length long = acc
+    | otherwise = long
+comp (x:xs) (y:ys) acc long
+    | x == y                     = comp xs ys (acc ++ [x]) long
+    | length acc > length long   = comp xs ys [] acc
+    | otherwise                  = comp xs ys [] long
+
+--This returns the powerset, not substrings
+ps :: String -> [String]
+ps [] = [[]]
+ps (x:xs) = subxs ++ (map (x:) subxs)
+    where subxs = ps xs
+
+--Returns all the substrings of a string (or other types).
+subs :: String -> [String]
+subs [] = []
+subs s = breakup s ++ subs (init s)
+    where
+	breakup :: String -> [String]
+        breakup [] = []
+        breakup (x:xs) = [(x:xs)] ++ (breakup xs)
+
+--Longest Repeated Substring
+lrs :: String -> String
+lrs [] = []
+lrs s = aux (dup (subs s)) 0 [] --Added extra length argument to prevent repeated computation of length. 
+    where
+        aux [] l cur = cur
+        aux (x:xs) l cur
+            | length x > l = aux xs (length x) x 
+            | otherwise    = aux xs l cur
+
+
+-- *************************** Pascal's Triangle ********************
+
+npas :: Int -> [Integer]
+npas m 
+    | n >= 0        = [choose n k | k <- [0..n]] 
+    | otherwise     = []
+    where 
+        choose n 0  = 1
+        choose 0 k  = 0
+        choose n k  = choose (n-1) (k-1) * n `div` k
+        n           = toInteger m
+
+mergelist :: [String] -> [String] -> String 
+mergelist [] (b:bs)     = b --list A gets selected first
+mergelist (a:as) []     = a
+mergelist (a:as) (b:bs) = a ++ b ++ mergelist as bs
+
+nodot :: Int -> String
+nodot n = rep n "."
+
+lastline :: Int -> String
+lastline n = mergelist [show x | x <- npas n] (map (nodot . length . show) (npas (n-1)))
+
+nextline :: String -> [Integer] -> String
+nextline below above = nlworker below above ""
+
+nlworker :: String -> [Integer] -> String -> String
+nlworker [] _ _             = []
+nlworker (a:as) [] []       = '.':nlworker as [] []
+nlworker (a:as) (b:bs) []
+    | a == '.'              = '.':nlworker as (b:bs) []
+    | otherwise             = '.':nlworker as bs (show b)
+nlworker (a:as) b (c:cs)
+    | a == '.'              = c:nlworker as b cs
+    | otherwise             = '.':nlworker as b (c:cs)
+
+pasloop :: Int -> String -> [Integer] -> String
+pasloop 0 below above = below
+pasloop n below above = pasloop (n-1) (nextline below above) (npas (n-2)) ++ "\n" ++ below
+
+pas :: Int -> String
+pas n = pasloop n (lastline n) (npas (n-1)) ++ "\n"
