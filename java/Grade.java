@@ -14,12 +14,27 @@ class Grade
 
     public static void main(String[] args)
     {
-        int mark = Integer.parseInt(args[0]);
-        if (mark < 0 || mark > 100)
+        try
         {
-            System.err.println("Not in the correct range");
+            int mark = Integer.parseInt(args[0]);
+            if (mark < 0 || mark > 100) throw new NotMarkException("Not in the range from 0 to 100.");
+            else System.out.println(getGrade(mark));
+        } 
+        catch(NotMarkException ex)
+        {
+            System.err.println(ex.getMessage());
             System.exit(1);
         }
-        else System.out.println(getGrade(mark));
-    }
+        catch(NumberFormatException|ArrayIndexOutOfBoundsException ex)
+        {
+            System.err.println("You need to input a number between 0 and 100.");
+            System.exit(1);
+        }
+    } 
+}
+
+class NotMarkException extends Exception
+{
+    public NotMarkException() { super(); }
+    public NotMarkException(String message) { super(message); }
 }
