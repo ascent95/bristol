@@ -16,9 +16,15 @@ class Grade
     {
         try
         {
-            int mark = Integer.parseInt(args[0]);
-            if (mark < 0 || mark > 100) throw new NotMarkException("Not in the range from 0 to 100.");
-            else System.out.println(getGrade(mark));
+            int acc = 0;
+            int mark;
+            for(int i=0; i<args.length; i++)
+            {
+                mark = Integer.parseInt(args[i]);
+                if (mark < 0 || mark > 100) throw new NotMarkException("Not in the range from 0 to 100.");
+                else acc += mark;
+            }
+            System.out.println(getGrade((int)Math.ceil((double)acc/args.length)));
         } 
         catch(NotMarkException ex)
         {
