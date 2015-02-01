@@ -20,11 +20,12 @@ class Grade
             int mark;
             for(int i=0; i<args.length; i++)
             {
+                if(args[i].matches("^[0-9]+\\.?[0-9]$"
                 mark = Integer.parseInt(args[i]);
                 if (mark < 0 || mark > 100) throw new NotMarkException("Not in the range from 0 to 100.");
                 else acc += mark;
             }
-            System.out.println(getGrade(Math.ceil((double)(acc/args.length))));
+            System.out.println(getGrade((int)Math.ceil((double)acc/args.length)));
         } 
         catch(NotMarkException ex)
         {

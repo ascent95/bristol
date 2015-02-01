@@ -16,13 +16,19 @@ class Grade
     {
         try
         {
-            int acc = 0;
-            int mark;
+            double acc = 0;
+            double mark;
             for(int i=0; i<args.length; i++)
             {
-                mark = Integer.parseInt(args[i]);
-                if (mark < 0 || mark > 100) throw new NotMarkException("Not in the range from 0 to 100.");
-                else acc += mark;
+                if(args[i].matches("^[0-9]+\\.?[0-9]$")
+                {
+                    mark = Double.parseDouble(args[i]);
+                    if (mark < 0 || mark > 100) throw new NotMarkException("Not in the range from 0 to 100.");
+                    else acc += mark;
+                }
+                
+                
+                
             }
             System.out.println(getGrade((int)Math.ceil((double)acc/args.length)));
         } 
