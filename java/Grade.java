@@ -26,9 +26,7 @@ class Grade
                     if (mark < 0 || mark > 100) throw new NotMarkException("Not in the range from 0 to 100.");
                     else acc += mark;
                 }
-                
-                
-                
+                else throw new NotMarkException("Not a number with one decimal place in the range 0 to 100.");            
             }
             System.out.println(getGrade((int)Math.ceil((double)acc/args.length)));
         } 
